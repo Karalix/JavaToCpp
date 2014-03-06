@@ -64,13 +64,13 @@ public class TP5 {
 		fieldTab = classe.getDeclaredFields();
 
 		for(Field f : fieldTab) {
-			if (f.toGenericString() == "public"){
+			if (f.toGenericString().split(" ")[0].equals("public")){
 				publicField.add(f);
 			}
-			if (f.toGenericString() == "private"){
+			if (f.toGenericString().split(" ")[0].equals("private")){
 				privateField.add(f);
 			}
-			if (f.toGenericString() == "protected"){
+			if (f.toGenericString().split(" ")[0].equals("protected")){
 				protectedField.add(f);
 			}
 		}
@@ -80,13 +80,13 @@ public class TP5 {
 		methodTab = classe.getDeclaredMethods();
 		
 		for(Method m : methodTab) {
-			if(m.toGenericString() == "public") {
+			if(m.toGenericString().split(" ")[0].equals("public")) {
 				publicMethod.add(m);
 			}
-			if(m.toGenericString()=="private"){
+			if(m.toGenericString().split(" ")[0].equals("private")){
 				privateMethod.add(m);
 			}
-			if(m.toGenericString()=="protected"){
+			if(m.toGenericString().split(" ")[0].equals("protected")){
 				protectedMethod.add(m);
 			}
 			
@@ -98,13 +98,13 @@ public class TP5 {
 		constructorTab = classe.getDeclaredConstructors();
 		
 		for(Constructor c : constructorTab) {
-			if(c.toGenericString() == "public") {
+			if(c.toGenericString().split(" ")[0].equals("public")) {
 				publicConstructor.add(c);
 			}
-			if(c.toGenericString()=="private"){
+			if(c.toGenericString().split(" ")[0].equals("private")){
 				privateConstructor.add(c);
 			}
-			if(c.toGenericString()=="protected"){
+			if(c.toGenericString().split(" ")[0].equals("protected")){
 				protectedConstructor.add(c);
 			}
 			
@@ -119,6 +119,8 @@ public class TP5 {
 		
 	    cpp = new File(className+".cpp");
 	    try {
+	    	if (cpp.exists())
+	    		cpp.delete();
 			cpp.createNewFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -127,6 +129,8 @@ public class TP5 {
 	    
 	    h = new File(className+".h");
 	    try {
+	    	if(h.exists())
+	    		h.delete();
 			h.createNewFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -137,7 +141,7 @@ public class TP5 {
 	public void writeHeaderHFile() {
 		FileWriter fw;
 		try {
-			fw = new FileWriter(h);
+			fw = new FileWriter(h,true);
 			
 
 			fw.write("#ifndef "+classe.getSimpleName().toUpperCase()+"_H\n");
@@ -145,13 +149,20 @@ public class TP5 {
 			fw.write("\n");
 			fw.write("class "+classe.getSimpleName()+"\n");
 			fw.write("{\n");
+			fw.close();
 			
 			writePrivateAtribute();
 			writeProtectedAtribute();
 			writePublicAtribute();
 			
+			writePrivateMethods();
+			writeProtectedMethods();
+			writePublicMethods();
 			
+			fw = new FileWriter(h,true);
+			fw.write("}\n");
 			fw.close();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -161,59 +172,156 @@ public class TP5 {
 	public void writePublicAtribute() {
         FileWriter fw;
               try {
-                      fw = new FileWriter(h);
+                      fw = new FileWriter(h,true);
                       
 
-fw.write("public:\n");
-
-for(Field f : publicField) {
-fw.write("\t"+f.toGenericString()+" "+f.toString()+"\n");
-}
-                      
+                      fw.write("public:\n");
                       fw.close();
-              } catch (IOException e) {
+
+                      for(Field f : publicField) {
+                    	  writeGenericAtribute(f);
+                      }
+                      
+              			} catch (IOException e) {
                       // TODO Auto-generated catch block
                       e.printStackTrace();
-              }
-}
+              		}
+	}
 
 public void writePrivateAtribute() {
         FileWriter fw;
               try {
-                      fw = new FileWriter(h);
+                      fw = new FileWriter(h,true);
                       
 
-fw.write("private:\n");
-
-for(Field f : privateField) {
-fw.write("\t"+f.toGenericString()+" "+f.toString()+"\n");
-}
+					fw.write("private:\n");
+                    fw.close();
+					
+					for(Field f : privateField) {
+						writeGenericAtribute(f);
+					}
                       
-                      fw.close();
-              } catch (IOException e) {
-                      // TODO Auto-generated catch block
-                      e.printStackTrace();
-              }
-}
+		              } catch (IOException e) {
+		                      // TODO Auto-generated catch block
+		                      e.printStackTrace();
+		              }
+	}
 
 public void writeProtectedAtribute() {
         FileWriter fw;
               try {
-                      fw = new FileWriter(h);
+                      fw = new FileWriter(h,true);
                       
 
-fw.write("protected:\n");
+						fw.write("protected:\n");
+	                     fw.close();
+						
+						for(Field f : protectedField) {
+							writeGenericAtribute(f);
+						}
+                      
+		              } catch (IOException e) {
+		                      // TODO Auto-generated catch block
+		                      e.printStackTrace();
+		              }
+	}
 
-for(Field f : protectedField) {
-fw.write("\t"+f.toGenericString()+" "+f.toString()+"\n");
+public void writePublicMethods() {
+    FileWriter fw;
+          try {
+                  fw = new FileWriter(h,true);
+                  
+
+				fw.write("public:\n");
+                fw.close();
+				
+				for(Method m : publicMethod) {
+					writeGenericMethod(m);
+				}
+                  
+	              } catch (IOException e) {
+	                      // TODO Auto-generated catch block
+	                      e.printStackTrace();
+	              }
 }
-                      
-                      fw.close();
-              } catch (IOException e) {
-                      // TODO Auto-generated catch block
-                      e.printStackTrace();
-              }
+
+public void writeProtectedMethods() {
+    FileWriter fw;
+          try {
+                  fw = new FileWriter(h,true);
+                  
+
+				fw.write("protected:\n");
+                fw.close();
+				
+				for(Method m : protectedMethod) {
+					writeGenericMethod(m);
+				}
+                  
+	              } catch (IOException e) {
+	                      // TODO Auto-generated catch block
+	                      e.printStackTrace();
+	              }
 }
 	
+
+public void writePrivateMethods() {
+    FileWriter fw;
+          try {
+                  fw = new FileWriter(h,true);
+                  
+
+				fw.write("private:\n");
+                fw.close();
+				
+				for(Method m : privateMethod) {
+					writeGenericMethod(m);
+				}
+                  
+	              } catch (IOException e) {
+	                      // TODO Auto-generated catch block
+	                      e.printStackTrace();
+	              }
+}
+
+public void writeGenericAtribute(Field f){
+	FileWriter fw;
+	try {
+		fw = new FileWriter(h,true);
+
+		String type = f.toString().split(" ")[1].split("\\.")[f.toString().split(" ")[1].split("\\.").length-1];
+		fw.write("\t"+type+" "+f.getName()+";\n");
+        fw.close();
+	} catch (IOException e) {
+		// TODO Bloc catch généré automatiquement
+		e.printStackTrace();
+	}
+}
+
+public void writeGenericMethod(Method m){
+	FileWriter fw;
+	try {
+		fw = new FileWriter(h,true);
+
+		String[] args = m.toGenericString().split("\\(")[1].split(",");
+		String type = m.toString().split(" ")[1].split("\\.")[m.toString().split(" ")[1].split("\\.").length-1];
+		fw.write("\t"+type+" "+m.getName()+"(");
+		for (int i =0 ; i< args.length ; ++i) {
+			fw.write(args[i].split("\\.")[args[i].split("\\.").length-1]);
+			if (i+1 != args.length)
+				fw.write(",");
+		}
+		fw.write(";\n");
+        fw.close();
+	} catch (IOException e) {
+		// TODO Bloc catch généré automatiquement
+		e.printStackTrace();
+	}
+}
+
+public void test(String i, String v)
+{
+}
+
 
 }
