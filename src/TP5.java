@@ -159,6 +159,8 @@ public class TP5 {
 			writeProtectedMethods();
 			writePublicMethods();
 			
+			
+			
 			fw = new FileWriter(h,true);
 			fw.write("}\n");
 			fw.close();
@@ -288,9 +290,13 @@ public void writeGenericAtribute(Field f){
 	FileWriter fw;
 	try {
 		fw = new FileWriter(h,true);
-
 		String type = f.toString().split(" ")[1].split("\\.")[f.toString().split(" ")[1].split("\\.").length-1];
-		fw.write("\t"+type+" "+f.getName()+";\n");
+		System.out.println(f.toGenericString());
+		fw.write("\t"+type);
+		if (f.toGenericString().contains("<"))
+			fw.write("<"+f.toGenericString().split("<")[1].split(">")[0].split("\\.")[f.toGenericString().split("<")[1].split(">")[0].split("\\.").length-1]+">");
+		fw.write(" "+f.getName());
+		fw.write(";\n");
         fw.close();
 	} catch (IOException e) {
 		// TODO Bloc catch généré automatiquement
