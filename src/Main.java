@@ -2,7 +2,7 @@
 public class Main {
 	
 	public static void main(String[] args) {
-		TP5 tp = new TP5();
+		TP5 tp = new TP5(1,2);
 		
 		
 		try {
@@ -19,8 +19,9 @@ public class Main {
 		
 		tp.createFile();
 		
+		tp.writeMain();
 		tp.writeHeaderHFile();
-		
+		tp.writeCPPFile();
 		
 	}
 
